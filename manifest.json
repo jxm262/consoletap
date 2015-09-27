@@ -10,7 +10,9 @@
     "default_popup": "menu.html"
   },
   "permissions": [
-    "<all_urls>",
-    "https://ajax.googleapis.com/"
+    "tabs",
+    "activeTab",
+    "http://*/*",
+    "https://*/*"
   ]
 }
