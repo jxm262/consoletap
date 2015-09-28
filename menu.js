@@ -7,19 +7,29 @@ var urls = {
 function menuItemClick(e) {
     var script = urls[e.target.id];
 
-    var loadScript = "var s = document.createElement('script');\
-    s.type = 'text/javascript';\
-    s.src = '" + script + "';\
-    (document.getElementsByTagName('head')[0] ||document.getElementsByTagName('body')[0]).appendChild(s);";
+    chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+        if (tabs[0].url == "chrome://newtab/") {
+            chrome.tabs.sendMessage(tabs[0].id, {script: script});
+        } else {
+            var loadScript = "var s = document.createElement('script');\
+            s.type = 'text/javascript';\
+            s.src = '" + script + "';\
+            (document.getElementsByTagName('head')[0] ||document.getElementsByTagName('body')[0]).appendChild(s);";
 
-    chrome.tabs.executeScript(null,{code:loadScript, allFrames: true});
+            chrome.tabs.executeScript(null, {
+                code: loadScript,
+                allFrames: true
+            });
+        }
+    });
 
     window.close();
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var menuItems = document.querySelectorAll('.menu-item');
-    for (var i=0; i < menuItems.length; i++) {
+    for (var i = 0; i < menuItems.length; i++) {
         menuItems[i].addEventListener('click', menuItemClick);
     }
 });
+
