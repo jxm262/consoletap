@@ -2,28 +2,21 @@
 <html>
     <head>
         <title>ConsoleTap</title>
-        <style>
-            .menu {
-                width: 150px;
-            }
-            .menu .menu-item {
-                width: 100%;
-                border-bottom: 1px solid #ccc;
-                padding: 5px;
-                font-size: 1.2em;
-            }
-            .menu .menu-item:hover {
-                background-color: #ffc;
-                cursor: pointer;
-            }
-        </style>
+        <link type="text/css" rel="stylesheet" href="css/menu.css">
         <script src="menu.js"></script>
     </head>
     <body>
         <div class="menu">
-            <div id="jquery" class="menu-item">jQuery</div>
-            <div id="lodash" class="menu-item">lodash</div>
-            <div id="underscore" class="menu-item">underscore</div>
+            <div id="jquery" class="js-lib">jQuery</div>
+            <div id="lodash" class="js-lib">lodash</div>
+            <div id="underscore" class="js-lib">underscore</div>
+            <div id="settings" class="">Settings</div>
+            <div id="input-box" class="hidden">
+                <div>Name: <input type="text" id='input-name' class="input-js"/></div>
+                <div>Input Url: <input type="text" id='input-url' class="input-js"/></div>
+                <p id="save">save</p>
+                <div style="clear: both;"></div>
+            </div>
         </div>
     </body>
 </html>

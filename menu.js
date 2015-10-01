@@ -26,10 +26,40 @@ function menuItemClick(e) {
     window.close();
 };
 
+function toggleHidden(el) {
+    el.className = (el.className == 'hidden') ? '' : 'hidden';
+};
+
 document.addEventListener('DOMContentLoaded', function () {
-    var menuItems = document.querySelectorAll('.menu-item');
+    var menuItems = document.querySelectorAll('.js-lib');
     for (var i = 0; i < menuItems.length; i++) {
         menuItems[i].addEventListener('click', menuItemClick);
     }
+
+    document.getElementById('settings').addEventListener('click', function (e) {
+        toggleHidden(e.target);
+        toggleHidden(document.getElementById('input-box'));
+    });
+
+    document.getElementById('save').addEventListener('click', function (e) {
+        var name = document.getElementById('input-name').value;
+        var url = document.getElementById('input-url').value;
+        urls[name] = url;
+        var div = document.createElement("div");
+        div.innerHTML = name;
+        div.id = name;
+
+        //document.getElementsByTagName('body')[0].appendChild(div);
+        console.log('url', url);
+        toggleHidden(document.getElementById('input-box'));
+        toggleHidden(document.getElementById('settings'));
+    });
+
 });
+
+//refactor all this stuff to use jQuery
+function setInnerHTML(element, content) {
+    element.innerHTML = content;
+    return element;
+};
 
