@@ -6,6 +6,7 @@ Quickly Load JavaScript Libraries Into Your Browser
 2. Select your desired JavaScript file  
 ![ScreenShot](screenshot1.png)  
   
+<br/>
 BAM!  It's loaded into your browser!  
   
 ###### Would you just look at that! Seriously.. just look at it!  
