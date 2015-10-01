@@ -1,6 +1,7 @@
 {
   "manifest_version": 2,
   "name": "ConsoleTap",
+  "short_name": "consoletap",
   "description": "Insert JavaScript Libraries Into Your Console",
   "version": "0.1.1",
   "content_scripts": [{
