@@ -7,7 +7,7 @@ Quickly Load JavaScript Libraries Into Your Browser
 ![ScreenShot](screenshot1.png)  
   
 <br/>
-BAM!  It's loaded into your browser!  
+#### BAM!  It's loaded into your browser!  
   
-###### Would you just look at that! Seriously.. just look at it!  
+##### Would you just look at that! Seriously.. just look at it!  
 ![ScreenShot](screenshot2.png)
