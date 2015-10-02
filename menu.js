@@ -16,7 +16,6 @@ var supportsSyncFileSystem = chrome && chrome.syncFileSystem;
 //};
 
 function menuItemClick(e) {
-
     chrome.storage.sync.get("consoletap", function(items) {
         if (!chrome.runtime.error) {
             if (items && items.consoletap && items.consoletap.urls) {
@@ -39,7 +38,22 @@ function menuItemClick(e) {
                     }
                     window.close();
                 });
-            } else {
+            }
+        }
+    });
+
+};
+
+function toggleHidden(el) {
+    el.className = (el.className == 'hidden') ? '' : 'hidden';
+};
+
+
+function init(cb) {
+    chrome.storage.sync.get("consoletap", function(items) {
+        if (!chrome.runtime.error) {
+
+            if (!(items && items.consoletap && items.consoletap.urls)) {
                 var urls = {
                     jquery: 'https://code.jquery.com/jquery-2.1.4.min.js',
                     lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js',
@@ -51,50 +65,66 @@ function menuItemClick(e) {
                     } else {
                         console.log('initialized default urls obj');
                     }
+                    cb(urls);
                     window.close();
                 });
+            } else {
+                cb(items.consoletap.urls);
             }
         }
     });
-
-};
-
-function toggleHidden(el) {
-    el.className = (el.className == 'hidden') ? '' : 'hidden';
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    var menuItems = document.querySelectorAll('.js-lib');
-    for (var i = 0; i < menuItems.length; i++) {
-        menuItems[i].addEventListener('click', menuItemClick);
-    }
+    var menu = document.getElementsByClassName('menu')[0];
+    var settings = document.getElementById('settings');
 
-    document.getElementById('settings').addEventListener('click', function (e) {
-        toggleHidden(e.target);
-        toggleHidden(document.getElementById('input-box'));
+    init(function (urls) {
+        //todo dynamically create and add to dom
+        for (var key in urls) {
+            var div = createMenuItem({name: key, id: key, className: 'js-lib'});
+            menu.insertBefore(div, settings);
+        }
+
+        var menuItems = document.querySelectorAll('.js-lib');
+        for (var i = 0; i < menuItems.length; i++) {
+            menuItems[i].addEventListener('click', menuItemClick);
+        }
+
+        document.getElementById('settings').addEventListener('click', function (e) {
+            toggleHidden(e.target);
+            toggleHidden(document.getElementById('input-box'));
+        });
+
+        document.getElementById('save').addEventListener('click', function (e) {
+            var name = document.getElementById('input-name').value;
+            var url = document.getElementById('input-url').value;
+            var div = document.createElement("div");
+
+            div.innerHTML = name;
+            div.className = 'js-lib';
+            div.id = name;
+
+
+
+            var inputBox = document.getElementById('input-box');
+            menu.insertBefore(div, settings);
+
+            saveLib({name: name, url: url});
+
+            toggleHidden(inputBox);
+            toggleHidden(settings);
+        });
     });
-
-    document.getElementById('save').addEventListener('click', function (e) {
-        var name = document.getElementById('input-name').value;
-        var url = document.getElementById('input-url').value;
-        var div = document.createElement("div");
-
-        div.innerHTML = name;
-        div.className = 'js-lib';
-        div.id = name;
-
-        var menu = document.getElementsByClassName('menu')[0];
-        var settings = document.getElementById('settings');
-        var inputBox = document.getElementById('input-box');
-        menu.insertBefore(div, settings);
-
-        saveLib({name: name, url: url});
-
-        toggleHidden(inputBox);
-        toggleHidden(settings);
-    });
-
 });
+
+function createMenuItem(item) {
+    var div = document.createElement("div");
+    div.innerHTML = item.name;
+    div.className = item.className;
+    div.id = item.id;
+    return div;
+};
 
 function saveLib(lib) {
     chrome.storage.sync.get('consoletap', function(items) {
