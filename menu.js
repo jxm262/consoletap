@@ -1,10 +1,13 @@
+// Note, I'm not using JQuery or other helper libs just for fun ;)
+// All dom manipulations are done with vanilla JS
+
 var supportsSyncFileSystem = chrome && chrome.syncFileSystem;
 
-//var urls = {
-//    jquery: 'https://code.jquery.com/jquery-2.1.4.min.js',
-//    lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js',
-//    underscore: 'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'
-//};
+var defaultUrls = {
+    jquery: 'https://code.jquery.com/jquery-2.1.4.min.js',
+    lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js',
+    underscore: 'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'
+};
 
 //todo move this to some persistent storage
 //function urls (cb) {
@@ -49,23 +52,42 @@ function toggleHidden(el) {
 };
 
 
+
+function getStorage(name, cb) {
+    chrome.storage.sync.get(name, function(item) {
+        //todo add error handling
+        cb(item);
+    });
+};
+
 function init(cb) {
+    getStorage("consoletap", function (item) {
+        if (!(item && item.consoletap && item.consoletap.urls)) {
+            chrome.storage.sync.set({ consoletap : {urls:  defaultUrls}}, function() {
+                if (chrome.runtime.error) {
+                    console.log("Runtime error.");
+                } else {
+                    console.log('initialized default urls obj');
+                }
+                cb(defaultUrls);
+                window.close();
+            });
+        } else {
+            cb(items.consoletap.urls);
+        }
+    });
+
     chrome.storage.sync.get("consoletap", function(items) {
         if (!chrome.runtime.error) {
 
             if (!(items && items.consoletap && items.consoletap.urls)) {
-                var urls = {
-                    jquery: 'https://code.jquery.com/jquery-2.1.4.min.js',
-                    lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js',
-                    underscore: 'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'
-                };
-                chrome.storage.sync.set({ consoletap : {urls:  urls}}, function() {
+                chrome.storage.sync.set({ consoletap : {urls:  defaultUrls}}, function() {
                     if (chrome.runtime.error) {
                         console.log("Runtime error.");
                     } else {
                         console.log('initialized default urls obj');
                     }
-                    cb(urls);
+                    cb(defaultUrls);
                     window.close();
                 });
             } else {
@@ -141,7 +163,20 @@ function saveLib(lib) {
     });
 };
 
-//refactor all this stuff to use jQuery
+function setStorage(item, cb) {
+    chrome.storage.sync.set(item, function() {
+        if (chrome.runtime.error) {
+            console.log("Runtime error.");
+        } else {
+            console.log('initialized default urls obj');
+        }
+        cb();
+        window.close();
+    });
+};
+
+
+
 function setInnerHTML(element, content) {
     element.innerHTML = content;
     return element;

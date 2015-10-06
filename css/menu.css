@@ -35,3 +35,8 @@
     text-align: center;
     float: right;
 }
+
+.input-label {
+    display: inline-block;
+    width: 40px;
+}
