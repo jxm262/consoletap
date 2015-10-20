@@ -3,7 +3,7 @@
   "name": "ConsoleTap",
   "short_name": "consoletap",
   "description": "Insert JavaScript Libraries Into Your Console",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "content_scripts": [{
     "matches": ["https://www.google.com/_/chrome/newtab*"],
     "js": ["newtabcontent.js"],

@@ -1,6 +1,4 @@
-// Note, I'm not using JQuery or other helper libs just for fun ;)
-// All dom manipulations are done with vanilla JS
-
+// Note, I'm not using JQuery or other helper libs so I can keep the filesize down
 var supportsSyncFileSystem = chrome && chrome.syncFileSystem;
 
 var defaultUrls = {
@@ -8,15 +6,6 @@ var defaultUrls = {
     lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js',
     underscore: 'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'
 };
-
-//todo move this to some persistent storage
-//function urls (cb) {
-//    chrome.storage.sync.get("consoletap", function(items) {
-//        if (!chrome.runtime.error) {
-//            cb(items);
-//        }
-//    });
-//};
 
 function menuItemClick(e) {
     chrome.storage.sync.get("consoletap", function(items) {
@@ -50,8 +39,6 @@ function menuItemClick(e) {
 function toggleHidden(el) {
     el.className = (el.className == 'hidden') ? '' : 'hidden';
 };
-
-
 
 function getStorage(name, cb) {
     chrome.storage.sync.get(name, function(item) {
@@ -97,6 +84,46 @@ function init(cb) {
     });
 };
 
+function createMenuItem(item) {
+    var div = document.createElement("div");
+    div.innerHTML = item.name;
+    div.className = item.className;
+    div.id = item.id;
+    return div;
+};
+
+function saveLib(lib) {
+    chrome.storage.sync.get('consoletap', function(items) {
+        var urls = items.consoletap.urls;
+        urls[lib.name] = lib.url;
+
+        chrome.storage.sync.set({consoletap: {urls: urls}}, function() {
+            if (chrome.runtime.error) {
+                console.log("Runtime error.");
+            } else {
+                console.log('initialized default urls obj');
+            }
+        });
+    });
+};
+
+function setStorage(item, cb) {
+    chrome.storage.sync.set(item, function() {
+        if (chrome.runtime.error) {
+            console.log("Runtime error.");
+        } else {
+            console.log('initialized default urls obj');
+        }
+        cb();
+        window.close();
+    });
+};
+
+function setInnerHTML(element, content) {
+    element.innerHTML = content;
+    return element;
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     var menu = document.getElementsByClassName('menu')[0];
     var settings = document.getElementById('settings');
@@ -139,46 +166,3 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-
-function createMenuItem(item) {
-    var div = document.createElement("div");
-    div.innerHTML = item.name;
-    div.className = item.className;
-    div.id = item.id;
-    return div;
-};
-
-function saveLib(lib) {
-    chrome.storage.sync.get('consoletap', function(items) {
-        var urls = items.consoletap.urls;
-        urls[lib.name] = lib.url;
-
-        chrome.storage.sync.set({consoletap: {urls: urls}}, function() {
-            if (chrome.runtime.error) {
-                console.log("Runtime error.");
-            } else {
-                console.log('initialized default urls obj');
-            }
-        });
-    });
-};
-
-function setStorage(item, cb) {
-    chrome.storage.sync.set(item, function() {
-        if (chrome.runtime.error) {
-            console.log("Runtime error.");
-        } else {
-            console.log('initialized default urls obj');
-        }
-        cb();
-        window.close();
-    });
-};
-
-
-
-function setInnerHTML(element, content) {
-    element.innerHTML = content;
-    return element;
-};
-
